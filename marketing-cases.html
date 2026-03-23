@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>品牌案例 | 平面设计师作品集</title>
+    <style>
+        /* 全局样式重置 & 基础变量 - 与主页保持一致 */
+        :root {
+            --primary: #ff3d00;
+            --secondary: #212121;
+            --light: #f5f5f5;
+            --dark: #121212;
+            --gray: #888888;
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', 'Noto Sans SC', sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--secondary);
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 导航栏 - 与主页一致 */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 2rem 0;
+            z-index: 1000;
+            transition: var(--transition);
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .nav-links a {
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--primary);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a.active {
+            color: var(--primary);
+        }
+
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        /* 返回首页链接 */
+        .back-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 2rem;
+            transition: var(--transition);
+        }
+
+        .back-home:hover {
+            transform: translateX(-5px);
+        }
+
+        /* ===== 上一个版本的Banner风格 ===== */
+        .hero-banner {
+            height: 60vh;
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            background-color: var(--dark);
+            color: white;
+            margin-top: 80px;
+        }
+
+        .banner-carousel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .banner-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .banner-slide.active {
+            opacity: 1;
+            z-index: 1;
+        }
+
+        .banner-slide::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.4) 100%);
+            z-index: 1;
+        }
+
+        .banner-controls {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 20;
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .banner-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.25);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .banner-btn:hover {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .banner-indicators {
+            position: absolute;
+            bottom: 2rem;
+            left: 2rem;
+            z-index: 20;
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .banner-indicator {
+            width: 50px;
+            height: 4px;
+            background-color: rgba(255,255,255,0.4);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .banner-indicator.active {
+            background-color: var(--primary);
+            width: 70px;
+        }
+
+        .banner-content {
+            position: relative;
+            z-index: 15;
+            padding: 0 5rem;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .banner-content .container {
+            position: relative;
+            z-index: 15;
+        }
+
+        .banner-title {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            line-height: 1.1;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            letter-spacing: -2px;
+        }
+
+        .banner-title span {
+            color: var(--primary);
+        }
+
+        .banner-subtitle {
+            font-size: clamp(1rem, 2vw, 1.4rem);
+            color: rgba(255,255,255,0.9);
+            max-width: 600px;
+            line-height: 1.6;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        /* 案例列表 - 单列详细展示 */
+        .cases-list {
+            padding: 5rem 0 5rem;
+            background-color: white;
+        }
+
+        .case-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            margin-bottom: 8rem;
+            align-items: center;
+        }
+
+        .case-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .case-item:nth-child(even) {
+            direction: rtl;
+        }
+
+        .case-item:nth-child(even) .case-content {
+            direction: ltr;
+        }
+
+        .case-image {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .case-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform 0.6s ease;
+        }
+
+        .case-image:hover img {
+            transform: scale(1.02);
+        }
+
+        .case-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255,61,0,0.1) 0%, rgba(0,0,0,0) 60%);
+            pointer-events: none;
+        }
+
+        .case-content {
+            padding: 2rem 0;
+        }
+
+        .case-category {
+            display: inline-block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            background-color: rgba(255,61,0,0.05);
+            padding: 0.3rem 1.2rem;
+            border-radius: 50px;
+        }
+
+        .case-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.3;
+            letter-spacing: -0.5px;
+        }
+
+        .case-client {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--secondary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid rgba(255,61,0,0.1);
+        }
+
+        .case-client i {
+            color: var(--primary);
+            margin-right: 0.5rem;
+        }
+
+        .case-description {
+            margin-bottom: 2rem;
+        }
+
+        .case-description p {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--gray);
+            margin-bottom: 1.5rem;
+        }
+
+        .case-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 2rem 0;
+            background-color: var(--light);
+            padding: 1.5rem;
+            border-radius: 12px;
+        }
+
+        .detail-item h4 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .detail-item p {
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--secondary);
+        }
+
+        .case-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            border: none;
+            margin-top: 1rem;
+        }
+
+        .case-link:hover {
+            background-color: var(--secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255,61,0,0.2);
+        }
+
+        .case-link i {
+            transition: transform 0.3s;
+        }
+
+        .case-link:hover i {
+            transform: translateX(5px);
+        }
+
+        /* 联系我板块 - 从首页复制 */
+        .contact {
+            background-color: var(--dark);
+            color: white;
+            padding: 8rem 0 4rem;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .section-title h2 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 4px;
+            background-color: var(--primary);
+            bottom: -10px;
+            left: 20%;
+        }
+
+        .section-title p {
+            color: var(--gray);
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .contact-info h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .contact-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .contact-text h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-text p {
+            color: var(--gray);
+        }
+
+        .contact-social {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .social-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        /* 页脚 */
+        footer {
+            background-color: var(--dark);
+            color: var(--gray);
+            padding: 2rem 0;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* 响应式 */
+        @media (max-width: 1024px) {
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .banner-content {
+                padding: 0 2rem;
+            }
+            
+            .contact-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem 0.8rem;
+                font-size: 0.8rem;
+            }
+            
+            .case-item {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                margin-bottom: 5rem;
+            }
+            
+            .case-item:nth-child(even) {
+                direction: ltr;
+            }
+            
+            .case-title {
+                font-size: 1.8rem;
+            }
+            
+            .case-details {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .banner-controls {
+                bottom: 1rem;
+                right: 1rem;
+            }
+            
+            .banner-indicators {
+                bottom: 1rem;
+                left: 1rem;
+            }
+            
+            .contact {
+                padding: 5rem 0 3rem;
+            }
+            
+            .section-title {
+                margin-bottom: 3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .banner-indicator {
+                width: 30px;
+            }
+            
+            .banner-indicator.active {
+                width: 45px;
+            }
+            
+            .case-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+    <!-- 字体图标 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 导航栏 - 当前页面高亮 -->
+    <nav id="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+				<img src="images/HUJIONG-01.png" style="width: 180px; height: auto; vertical-align: middle;">
+				</div>
+            <ul class="nav-links">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="index.html#about">关于我</a></li>
+                <li><a href="brand-cases.html" target="_blank">品牌案例</a></li>
+                <li><a href="marketing-cases.html"class="active">营销案例</a></li>
+                <li><a href="ecommerce-cases.html"target="_blank">电商案例</a></li>
+                <li><a href="catalog-cases.html"target="_blank">画册案例</a></li>
+                <li><a href="presentation-cases.html"target="_blank">演示课件案例</a></li>
+                <li><a href="#contact">联系我</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- ===== 上一个版本的Banner风格 ===== -->
+    <section class="hero-banner">
+        <!-- 轮播背景 -->
+        <div class="banner-carousel">
+            <div class="banner-slide active" style="background-image: url('https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');"></div>
+            <div class="banner-slide" style="background-image: url('https://images.unsplash.com/photo-1558655146-d09347e92766?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');"></div>
+            <div class="banner-slide" style="background-image: url('https://images.unsplash.com/photo-1542744173-05336fcc7ad4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');"></div>
+        </div>
+
+        <!-- 轮播控件 -->
+        <div class="banner-controls">
+            <button class="banner-btn" id="prevBanner"><i class="fas fa-chevron-left"></i></button>
+            <button class="banner-btn" id="nextBanner"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="banner-indicators" id="bannerIndicators">
+            <button class="banner-indicator active" data-index="0"></button>
+            <button class="banner-indicator" data-index="1"></button>
+            <button class="banner-indicator" data-index="2"></button>
+        </div>
+
+        <!-- Banner文字内容 -->
+        <div class="container">
+            <div class="banner-content" id="bannerText">
+                <a href="index.html" class="back-home" style="color: white; margin-bottom: 1rem;"><i class="fas fa-arrow-left"></i> 返回首页</a>
+                <h1 class="banner-title"><span>营销</span>案例</h1>
+                <p class="banner-subtitle">精选3个品牌全案设计项目，从策略到视觉落地，完整呈现设计思考与执行过程。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 案例列表 - 单列详细展示 -->
+    <section class="cases-list">
+        <div class="container">
+            <!-- 案例 1: 科技品牌VI全案 -->
+            <div class="case-item">
+                <div class="case-image">
+                    <img src="https://images.unsplash.com/photo-1587614382346-4ec70e388b28?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="科技品牌VI设计">
+                </div>
+                <div class="case-content">
+                    <span class="case-category">VI全案设计</span>
+                    <h2 class="case-title">NEXUS · 科技品牌视觉系统</h2>
+                    <div class="case-client"><i class="fas fa-building"></i> 客户：NEXUS AI 科技公司</div>
+                    
+                    <div class="case-description">
+                        <p><strong>项目背景：</strong>NEXUS是一家专注于人工智能解决方案的初创企业，需要建立一套完整、专业的品牌视觉系统，以在竞争激烈的科技市场中树立可信赖、创新的品牌形象。</p>
+                        <p><strong>设计亮点：</strong>以“连接未来”为核心概念，标志由无限符号与数据流线条结合，色彩采用科技蓝搭配活力橙，展现理性与创意的平衡。整套VI涵盖标志、色彩、字体、辅助图形、办公应用及数字媒体规范。</p>
+                    </div>
+                    
+                    <div class="case-details">
+                        <div class="detail-item">
+                            <h4>服务内容</h4>
+                            <p>品牌策略 · LOGO设计 · VI系统 · 品牌手册</p>
+                        </div>
+                        <div class="detail-item">
+                            <h4>设计周期</h4>
+                            <p>8周</p>
+                        </div>
+                    </div>
+                    
+                    <a href="#" class="case-link">查看完整项目 <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+
+            <!-- 案例 2: 餐饮品牌LOGO升级 -->
+            <div class="case-item">
+                <div class="case-image">
+                    <img src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="餐饮品牌LOGO升级">
+                </div>
+                <div class="case-content">
+                    <span class="case-category">LOGO升级</span>
+                    <h2 class="case-title">味·空间 · 连锁餐饮品牌升级</h2>
+                    <div class="case-client"><i class="fas fa-building"></i> 客户：味·空间 餐饮管理有限公司</div>
+                    
+                    <div class="case-description">
+                        <p><strong>项目背景：</strong>味·空间是拥有15年历史的本地餐饮品牌，面临品牌老化问题，需要进行LOGO及视觉形象的现代化升级，同时保留原有顾客的情感认知。</p>
+                        <p><strong>设计亮点：</strong>保留原有品牌识别符号“碗”的造型，将其简化并融入书法笔触，色彩从传统的红色升级为更具质感的朱砂红搭配暖灰色。新LOGO既传承了品牌历史，又符合现代审美。</p>
+                    </div>
+                    
+                    <div class="case-details">
+                        <div class="detail-item">
+                            <h4>服务内容</h4>
+                            <p>品牌诊断 · LOGO升级 · 视觉规范 · 门店应用</p>
+                        </div>
+                        <div class="detail-item">
+                            <h4>设计周期</h4>
+                            <p>6周</p>
+                        </div>
+                    </div>
+                    
+                    <a href="#" class="case-link">查看完整项目 <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+
+            <!-- 案例 3: 文创品牌全案策划 -->
+            <div class="case-item">
+                <div class="case-image">
+                    <img src="https://images.unsplash.com/photo-1558655146-d09347e92766?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="文创品牌全案">
+                </div>
+                <div class="case-content">
+                    <span class="case-category">品牌全案</span>
+                    <h2 class="case-title">纸间 · 文创生活品牌创建</h2>
+                    <div class="case-client"><i class="fas fa-building"></i> 客户：纸间文化创意有限公司</div>
+                    
+                    <div class="case-description">
+                        <p><strong>项目背景：</strong>纸间是一个新兴文创品牌，主打高品质纸质文具和生活方式产品。需要从零开始建立完整的品牌体系，包括品牌命名、定位、视觉识别及产品包装。</p>
+                        <p><strong>设计亮点：</strong>以“纸的温度”为品牌理念，标志采用手写字体搭配纸张折叠的抽象图形，色彩选用温暖的大地色系。整体视觉风格简约、温暖、有质感，与产品调性高度契合。</p>
+                    </div>
+                    
+                    <div class="case-details">
+                        <div class="detail-item">
+                            <h4>服务内容</h4>
+                            <p>品牌命名 · 定位策略 · VI系统 · 包装设计 · 空间导视</p>
+                        </div>
+                        <div class="detail-item">
+                            <h4>设计周期</h4>
+                            <p>12周</p>
+                        </div>
+                    </div>
+                    
+                    <a href="#" class="case-link">查看完整项目 <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+ <!-- 联系我 -->
+ <section id="contact" class="contact">
+     <div class="container">
+         <div class="section-title">
+             <h2>联系我</h2>
+             <p>期待与您合作，共同创造有价值的设计作品</p>
+         </div>
+         <div class="contact-content">
+             <div class="contact-info">
+                 <h3>随时沟通</h3>
+                 <div class="contact-item">
+                     <div class="contact-icon"><i class="fas fa-phone"></i></div>
+                     <div class="contact-text"><h4>电话</h4><p>182-7230-5498</p></div>
+                 </div>
+                 <div class="contact-item">
+                     <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+                     <div class="contact-text"><h4>邮箱</h4><p>724309849@qq.com</p></div>
+                 </div>
+                 <div class="contact-item">
+                     <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+                     <div class="contact-text"><h4>地址</h4><p>湖北  ·  武汉</p></div>
+                 </div>
+                 <div class="contact-social">
+                     <!-- 社交图标 + 二维码弹窗 -->
+					 <div class="social-item">
+					     <a href="#" class="social-icon"><i class=" <?xml version="1.0" encoding="UTF-8"?><svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17 29C21 29 25 26.9339 28 23.4065C36 14 41.4242 16.8166 44 17.9998C38.5 20.9998 40.5 29.6233 33 35.9998C28.382 39.9259 23.4945 41.014 19 41C12.5231 40.9799 6.86226 37.7637 4 35.4063V16.9998" stroke="#333" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.64808 15.8669C5.02231 14.9567 3.77715 14.7261 2.86694 15.3519C1.95673 15.9777 1.72615 17.2228 2.35192 18.1331L5.64808 15.8669ZM36.0021 35.7309C36.958 35.1774 37.2843 33.9539 36.7309 32.9979C36.1774 32.042 34.9539 31.7157 33.9979 32.2691L36.0021 35.7309ZM2.35192 18.1331C5.2435 22.339 10.7992 28.144 16.8865 32.2239C19.9345 34.2667 23.217 35.946 26.449 36.7324C29.6946 37.522 33.0451 37.4428 36.0021 35.7309L33.9979 32.2691C32.2049 33.3072 29.9929 33.478 27.3947 32.8458C24.783 32.2103 21.9405 30.7958 19.1135 28.9011C13.4508 25.106 8.2565 19.661 5.64808 15.8669L2.35192 18.1331Z" fill="#333"/><path d="M33.5947 17C32.84 14.7027 30.8551 9.94054 27.5947 7H11.5947C15.2174 10.6757 23.0002 16 27.0002 24" stroke="#333" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></i></a>
+					     <div class="qrcode-popup"><img src="images/feishu.jpg" alt="Instagram二维码"></div>
+					 </div>
+                     <div class="social-item">
+                         <a href="#" class="social-icon"><i class="fab fa-qq"></i></a>
+                         <div class="qrcode-popup"><img src="images/qq.jpg" alt="Instagram二维码"></div>
+                     </div>
+                     <div class="social-item">
+                         <a href="#" class="social-icon"><i class="fab fa-weixin"></i></a>
+                         <div class="qrcode-popup"><img src="images/weixin.jpg" alt="微信二维码"></div>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+ </section>
+ 
+ <!-- CSS 样式 -->
+ <style>
+ /* 基础社交图标容器样式 */
+ .contact-social {
+     display: flex;
+     gap: 15px;
+     margin-top: 20px;
+ }
+ 
+ /* 单个社交项目容器 - 相对定位用于弹窗 */
+ .social-item {
+     position: relative;
+ }
+ 
+ /* 社交图标样式 */
+ .social-icon {
+     display: inline-flex;
+     align-items: center;
+     justify-content: center;
+     width: 40px;
+     height: 40px;
+     border-radius: 50%;
+     background-color: #f0f0f0;
+     color: #333;
+     font-size: 18px;
+     text-decoration: none;
+     transition: all 0.3s ease;
+ }
+ 
+ .social-icon:hover {
+     background-color: #007bff;
+     color: white;
+ }
+ 
+ /* 二维码弹窗 - 默认隐藏 */
+ .qrcode-popup {
+     position: absolute;
+     top: -150px;  /* 弹窗显示在图标上方 */
+     left: 50%;
+     transform: translateX(-50%);
+     padding: 10px;
+     background-color: white;
+     border-radius: 8px;
+     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+     z-index: 999;
+     opacity: 0;
+     visibility: hidden;
+     transition: all 0.3s ease;
+ }
+ 
+ /* 二维码图片样式 */
+ .qrcode-popup img {
+     width: 120px;
+     height: 120px;
+     display: block;
+ }
+ 
+ /* 鼠标悬浮时显示弹窗 */
+ .social-item:hover .qrcode-popup {
+     opacity: 1;
+     visibility: visible;
+     top: -140px;  /* 轻微位移动画 */
+ }
+ </style>
+ 
+ <!-- 引入字体图标库（确保图标能正常显示） -->
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.style.padding = '1rem 0';
+            } else {
+                navbar.style.padding = '2rem 0';
+            }
+        });
+
+        // Banner轮播功能
+        (function() {
+            const slides = document.querySelectorAll('.banner-slide');
+            const prevBtn = document.getElementById('prevBanner');
+            const nextBtn = document.getElementById('nextBanner');
+            const indicators = document.querySelectorAll('.banner-indicator');
+            let currentIndex = 0;
+            const totalSlides = slides.length;
+            let autoPlayInterval;
+
+            function showSlide(index) {
+                if (index < 0) index = totalSlides - 1;
+                if (index >= totalSlides) index = 0;
+
+                slides.forEach((slide, i) => {
+                    slide.classList.toggle('active', i === index);
+                });
+                indicators.forEach((ind, i) => {
+                    ind.classList.toggle('active', i === index);
+                });
+
+                currentIndex = index;
+            }
+
+            function nextSlide() { showSlide(currentIndex + 1); }
+            function prevSlide() { showSlide(currentIndex - 1); }
+
+            if (nextBtn && prevBtn) {
+                nextBtn.addEventListener('click', () => { nextSlide(); resetAutoPlay(); });
+                prevBtn.addEventListener('click', () => { prevSlide(); resetAutoPlay(); });
+            }
+
+            indicators.forEach((ind, idx) => {
+                ind.addEventListener('click', () => { showSlide(idx); resetAutoPlay(); });
+            });
+
+            function startAutoPlay() { autoPlayInterval = setInterval(nextSlide, 5000); }
+            function resetAutoPlay() { clearInterval(autoPlayInterval); startAutoPlay(); }
+
+            startAutoPlay();
+
+            const banner = document.querySelector('.hero-banner');
+            if (banner) {
+                banner.addEventListener('mouseenter', () => clearInterval(autoPlayInterval));
+                banner.addEventListener('mouseleave', () => startAutoPlay());
+            }
+        })();
+
+        // 平滑滚动处理联系我锚点
+        document.querySelectorAll('a[href^="#contact"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector('#contact');
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

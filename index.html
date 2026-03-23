@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视觉作品集 | 平面设计师 · 动态轮播</title>
+    <style>
+        /* 全局样式重置 & 基础变量 */
+        :root {
+            --primary: #ff3d00;
+            --secondary: #212121;
+            --light: #f5f5f5;
+            --dark: #121212;
+            --gray: #888888;
+            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', 'Noto Sans SC', sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--secondary);
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* 导航栏 - 极简悬浮设计 */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 2rem 0;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        nav.scrolled {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 1rem 0;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            color: var(--primary);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .nav-links a {
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: var(--primary);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* 英雄区 - 全屏轮播 (文字同步变化) */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 轮播容器 */
+        .carousel {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .carousel-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .carousel-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .carousel-slide.active {
+            opacity: 1;
+            z-index: 1;
+        }
+
+        /* 每张轮播图的遮罩 */
+        .carousel-slide::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.3) 100%);
+            z-index: 1;
+        }
+
+        /* 轮播控制按钮 */
+        .carousel-controls {
+            position: absolute;
+            bottom: 3rem;
+            right: 3rem;
+            z-index: 20;
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .carousel-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: rgba(255,255,255,0.25);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.4);
+            color: white;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .carousel-btn:hover {
+            background-color: var(--primary);
+            border-color: var(--primary);
+            transform: scale(1.1);
+        }
+
+        .carousel-indicators {
+            position: absolute;
+            bottom: 3rem;
+            left: 3rem;
+            z-index: 20;
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .indicator {
+            width: 50px;
+            height: 4px;
+            background-color: rgba(255,255,255,0.4);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .indicator.active {
+            background-color: var(--primary);
+            width: 70px;
+        }
+
+        /* 英雄内容层 - 放在轮播上方，文字动态变化 */
+        .hero-content {
+            position: relative;
+            z-index: 15;
+            flex: 1;
+            padding: 0 5rem;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            transition: opacity 0.5s ease;
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 8vw, 6rem);
+            line-height: 1.1;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            letter-spacing: -2px;
+        }
+
+        .hero-title span {
+            color: var(--primary);
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            color: rgba(255,255,255,0.9);
+            max-width: 600px;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .hero-cta {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: var(--transition);
+            box-shadow: 0 10px 30px rgba(255, 61, 0, 0.3);
+            border: none;
+            text-shadow: none;
+        }
+
+        .hero-cta:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(255, 61, 0, 0.4);
+        }
+
+        .hero .container {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* 其他板块样式 */
+        section {
+            padding: 8rem 0;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .section-title h2 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            width: 60%;
+            height: 4px;
+            background-color: var(--primary);
+            bottom: -10px;
+            left: 20%;
+        }
+
+        .section-title p {
+            color: var(--gray);
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .about {
+            background-color: white;
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-img {
+            position: relative;
+        }
+
+        .about-img img {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .about-img::after {
+            content: '';
+            position: absolute;
+            width: 80%;
+            height: 80%;
+            border: 3px solid var(--primary);
+            border-radius: 10px;
+            top: -20px;
+            left: -20px;
+            z-index: -1;
+        }
+
+        .about-text h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-text p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--gray);
+            margin-bottom: 2rem;
+        }
+
+        /* 技能板块 - 图标占位 + 软件名称 (图标暂空，用灰色块表示图片位置) */
+        .skills-board {
+            margin-top: 2.5rem;
+            background-color: var(--light);
+            border-radius: 20px;
+            padding: 2rem 2rem 1.5rem 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .skills-board h4 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .skills-board h4 i {
+            color: var(--primary);
+            font-size: 2rem;
+        }
+
+        .software-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 1.8rem 1rem;
+        }
+
+        .software-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            padding: 1.5rem 1rem;
+            border-radius: 12px;
+            transition: var(--transition);
+            border: 1px solid rgba(0,0,0,0.02);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+            text-align: center;
+        }
+
+        .software-item:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 25px rgba(255, 61, 0, 0.12);
+            border-color: var(--primary);
+        }
+
+        /* 图标占位 - 空白图片位置，用灰色块+虚线表示将来放图标jpg */
+        .software-icon-placeholder {
+            width: 60px;
+            height: 60px;
+            background-color: #e0e0e0;
+            border-radius: 12px;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed #aaa;
+            color: #777;
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .software-name {
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-bottom: 0.2rem;
+            color: var(--secondary);
+        }
+
+        /* 作品集 */
+        .portfolio {
+            background-color: var(--light);
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .portfolio-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            height: 400px;
+        }
+
+        .portfolio-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .portfolio-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2rem;
+            color: white;
+            opacity: 0;
+            transition: var(--transition);
+            transform: translateY(20px);
+        }
+
+        .portfolio-item:hover .portfolio-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .portfolio-item:hover .portfolio-img {
+            transform: scale(1.05);
+        }
+
+        .portfolio-category {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .portfolio-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        /* 联系我 */
+        .contact {
+            background-color: var(--dark);
+            color: white;
+            padding: 8rem 0 4rem;
+        }
+
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .contact-info h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .contact-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .contact-text h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-text p {
+            color: var(--gray);
+        }
+
+        .contact-social {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .social-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .social-icon:hover {
+            background-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        footer {
+            background-color: var(--dark);
+            color: var(--gray);
+            padding: 2rem 0;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* 响应式 */
+        @media (max-width: 1024px) {
+            .hero .container {
+                justify-content: center;
+                text-align: center;
+            }
+            .hero-content {
+                padding: 0 2rem;
+                text-align: center;
+            }
+            .hero-subtitle {
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .carousel-indicators {
+                left: 50%;
+                transform: translateX(-50%);
+                bottom: 2rem;
+            }
+            .carousel-controls {
+                right: 50%;
+                transform: translateX(50%);
+                bottom: 5rem;
+            }
+            .about-content, .contact-content {
+                grid-template-columns: 1fr;
+            }
+            .about-img {
+                max-width: 80%;
+                margin: 0 auto;
+            }
+            .nav-links {
+                gap: 1rem;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem 0.8rem;
+                font-size: 0.8rem;
+            }
+            section {
+                padding: 5rem 0;
+            }
+            .portfolio-grid {
+                grid-template-columns: 1fr;
+            }
+            .software-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-links {
+                display: none; /* 极窄隐藏，保留logo */
+            }
+            .hero-title {
+                font-size: clamp(2rem, 10vw, 4rem);
+            }
+            .section-title {
+                margin-bottom: 3rem;
+            }
+            .portfolio-item {
+                height: 300px;
+            }
+            .carousel-indicators {
+                bottom: 1.5rem;
+            }
+            .indicator {
+                width: 30px;
+            }
+            .indicator.active {
+                width: 45px;
+            }
+            .software-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <!-- 字体图标 & 谷歌字体 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 导航栏 - 案例板块设置跳转到二级页面 (# 表示二级页面链接，实际开发中替换为具体URL) -->
+    <nav id="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+			<img src="images/HUJIONG-01.png" style="width: 180px; height: auto; vertical-align: middle;">
+			</div>
+            <ul class="nav-links">
+                <li><a href="#home">首页</a></li>
+                <li><a href="#about">关于我</a></li>
+                <li><a href="brand-cases.html" target="_blank">品牌案例</a></li>          <!-- 跳转到二级页面 -->
+                <li><a href="marketing-cases.html" target="_blank">营销案例</a></li>      <!-- 跳转到二级页面 -->
+                <li><a href="ecommerce-cases.html" target="_blank">电商案例</a></li>      <!-- 跳转到二级页面 -->
+                <li><a href="catalog-cases.html" target="_blank">画册案例</a></li>        <!-- 跳转到二级页面 -->
+                <li><a href="presentation-cases.html" target="_blank">演示课件案例</a></li> <!-- 跳转到二级页面 -->
+                <li><a href="#contact">联系我</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 英雄区 - 动态轮播 + 文字同步变化 -->
+    <section id="home" class="hero">
+        <!-- 轮播背景图片 -->
+        <div class="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-slide active" style="background-image: url(images/轮播1.png);" data-index="0"></div>
+                <div class="carousel-slide" style="background-image: url('https://images.unsplash.com/photo-1558655146-d09347e92766?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');" data-index="1"></div>
+                <div class="carousel-slide" style="background-image: url('https://images.unsplash.com/photo-1542744173-05336fcc7ad4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');" data-index="2"></div>
+            </div>
+        </div>
+
+        <!-- 轮播控件 -->
+        <div class="carousel-controls">
+            <button class="carousel-btn" id="prevBtn"><i class="fas fa-chevron-left"></i></button>
+            <button class="carousel-btn" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="carousel-indicators" id="indicators">
+            <button class="indicator active" data-index="0"></button>
+            <button class="indicator" data-index="1"></button>
+            <button class="indicator" data-index="2"></button>
+        </div>
+
+        <!-- 动态文字内容 (根据幻灯片变化) -->
+        <div class="container">
+            <div class="hero-content" id="heroText">
+                <!-- 初始内容 (与第一张幻灯片匹配) 品牌设计 -->
+                <h1 class="hero-title"><span>品牌</span>视觉语言</h1>
+                <p class="hero-subtitle">从LOGO到全案，打造独一无二的品牌视觉体系，提升品牌辨识度</p>
+                <a href="#portfolio" class="hero-cta">查看品牌设计</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 关于我板块 (保留原样，技能图标占位 + 软件名称) -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="section-title">
+                <h2>关于我</h2>
+                <p>9年平面设计经验，专注于品牌视觉与商业设计，擅长将创意转化为有效的视觉语言</p>
+            </div>
+            <div class="about-content">
+                <div class="about-img">
+                    <img src="images/z1.png" alt="个人形象">
+                </div>
+                <div class="about-text">
+                    <h3>用设计解决问题</h3>
+                    <p>我是一名资深平面设计师，毕业于XX设计学院视觉传达专业，拥有9年专业设计经验。曾服务于多家知名企业，涵盖电商、科技、文创等多个领域。</p>
+                    <p>我的设计理念是：设计不仅是美学的表达，更是解决商业问题的工具。我擅长从品牌战略出发，结合用户体验，创造既有视觉冲击力又有商业价值的设计作品。</p>
+                    
+                    <!-- 技能板块: 图标位置留空 (灰色占位块，表示将来放jpg图片) + 软件名称 -->
+                    <div class="skills-board">
+                        <h4><i class="fas fa-laptop-code"></i> 专业软件技能</h4>
+                        <div class="software-grid">
+                            <!-- Photoshop - 图标占位 -->
+                            <div class="software-item">
+                                <img src="images/ps.png" style="width: 80px; height: auto>
+                                <span class="software-name">Photoshop</span>
+                            </div>
+                            <!-- Illustrator -->
+                            <div class="software-item">
+                                <img src="images/ai.png" style="width: 80px; height: auto>
+                                <span class="software-name">Illustrator</span>
+                            </div>
+                            <!-- Premiere Pro -->
+                            <div class="software-item">
+                                <img src="images/pr.png" style="width: 80px; height: auto>
+                                <span class="software-name">Premiere Pro</span>
+                            </div>
+                            <!-- Lightroom -->
+                            <div class="software-item">
+                                <img src="images/blendder.png" style="width: 80px; height: auto>
+                                <span class="software-name">blendder</span>
+                            </div>
+                            <!-- InDesign -->
+                            <div class="software-item">
+                                <img src="images/cdr.png" style="width: 80px; height: auto>
+                                <span class="software-name">CorelDRAW</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 作品集板块 - 修改1: 文案修改为“精选作品，每一个作品都凝聚着创意与思考，用视觉语言讲述品牌故事” -->
+    <section id="portfolio" class="portfolio">
+        <div class="container">
+            <div class="section-title">
+                <h2>精选作品</h2>
+                <p>每一个作品都凝聚着创意与思考，用视觉语言讲述品牌故事</p>  <!-- 修改后的文案 -->
+            </div>
+            <div class="portfolio-grid">
+                <div class="portfolio-item"><img src="https://images.unsplash.com/photo-1587614382346-4ec70e388b28?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="营销案例" class="portfolio-img"><div class="portfolio-overlay"><span class="portfolio-category">营销案例</span><h3 class="portfolio-title">科技品牌VI全案设计</h3></div></div>
+                <div class="portfolio-item"><img src="images/轮播1.png" alt="包装设计" class="portfolio-img"><div class="portfolio-overlay"><span class="portfolio-category">包装设计</span><h3 class="portfolio-title">食品品牌包装升级设计</h3></div></div>
+                <div class="portfolio-item"><img src="https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="营销案例" class="portfolio-img"><div class="portfolio-overlay"><span class="portfolio-category">营销案例</span><h3 class="portfolio-title">文创产品推广海报设计</h3></div></div>
+                <div class="portfolio-item"><img src="images/轮播1.png" alt="电商案例" class="portfolio-img"><div class="portfolio-overlay"><span class="portfolio-category">电商案例</span><h3 class="portfolio-title">电商APP界面设计</h3></div></div>
+                <div class="portfolio-item"><img src="https://images.unsplash.com/photo-1619241638225-14d56e47ae64?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="营销案例" class="portfolio-img"><div class="portfolio-overlay"><span class="portfolio-category">画册案例</span><h3 class="portfolio-title">企业年度画册设计</h3></div></div>
+                <div class="portfolio-item"><img src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="营销案例" class="portfolio-img"><div class="portfolio-overlay"><span class="portfolio-category">演示课件案例</span><h3 class="portfolio-title">餐饮品牌LOGO设计</h3></div></div>
+            </div>
+        </div>
+    </section>
+
+   <!-- 联系我 -->
+   <section id="contact" class="contact">
+       <div class="container">
+           <div class="section-title">
+               <h2>联系我</h2>
+               <p>期待与您合作，共同创造有价值的设计作品</p>
+           </div>
+           <div class="contact-content">
+               <div class="contact-info">
+                   <h3>随时沟通</h3>
+                   <div class="contact-item">
+                       <div class="contact-icon"><i class="fas fa-phone"></i></div>
+                       <div class="contact-text"><h4>电话</h4><p>182-7230-5498</p></div>
+                   </div>
+                   <div class="contact-item">
+                       <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+                       <div class="contact-text"><h4>邮箱</h4><p>724309849@qq.com</p></div>
+                   </div>
+                   <div class="contact-item">
+                       <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+                       <div class="contact-text"><h4>地址</h4><p>湖北  ·  武汉</p></div>
+                   </div>
+                   <div class="contact-social">
+                       <!-- 社交图标 + 二维码弹窗 -->
+					   <div class="social-item">
+					       <a href="#" class="social-icon"><i class=" <?xml version="1.0" encoding="UTF-8"?><svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17 29C21 29 25 26.9339 28 23.4065C36 14 41.4242 16.8166 44 17.9998C38.5 20.9998 40.5 29.6233 33 35.9998C28.382 39.9259 23.4945 41.014 19 41C12.5231 40.9799 6.86226 37.7637 4 35.4063V16.9998" stroke="#333" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M5.64808 15.8669C5.02231 14.9567 3.77715 14.7261 2.86694 15.3519C1.95673 15.9777 1.72615 17.2228 2.35192 18.1331L5.64808 15.8669ZM36.0021 35.7309C36.958 35.1774 37.2843 33.9539 36.7309 32.9979C36.1774 32.042 34.9539 31.7157 33.9979 32.2691L36.0021 35.7309ZM2.35192 18.1331C5.2435 22.339 10.7992 28.144 16.8865 32.2239C19.9345 34.2667 23.217 35.946 26.449 36.7324C29.6946 37.522 33.0451 37.4428 36.0021 35.7309L33.9979 32.2691C32.2049 33.3072 29.9929 33.478 27.3947 32.8458C24.783 32.2103 21.9405 30.7958 19.1135 28.9011C13.4508 25.106 8.2565 19.661 5.64808 15.8669L2.35192 18.1331Z" fill="#333"/><path d="M33.5947 17C32.84 14.7027 30.8551 9.94054 27.5947 7H11.5947C15.2174 10.6757 23.0002 16 27.0002 24" stroke="#333" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg></i></a>
+					       <div class="qrcode-popup"><img src="images/feishu.jpg" alt="Instagram二维码"></div>
+					   </div>
+                       <div class="social-item">
+                           <a href="#" class="social-icon"><i class="fab fa-qq"></i></a>
+                           <div class="qrcode-popup"><img src="images/qq.jpg" alt="Instagram二维码"></div>
+                       </div>
+                       <div class="social-item">
+                           <a href="#" class="social-icon"><i class="fab fa-weixin"></i></a>
+                           <div class="qrcode-popup"><img src="images/weixin.jpg" alt="微信二维码"></div>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </div>
+   </section>
+   
+   <!-- CSS 样式 -->
+   <style>
+   /* 基础社交图标容器样式 */
+   .contact-social {
+       display: flex;
+       gap: 15px;
+       margin-top: 20px;
+   }
+   
+   /* 单个社交项目容器 - 相对定位用于弹窗 */
+   .social-item {
+       position: relative;
+   }
+   
+   /* 社交图标样式 */
+   .social-icon {
+       display: inline-flex;
+       align-items: center;
+       justify-content: center;
+       width: 40px;
+       height: 40px;
+       border-radius: 50%;
+       background-color: #f0f0f0;
+       color: #333;
+       font-size: 18px;
+       text-decoration: none;
+       transition: all 0.3s ease;
+   }
+   
+   .social-icon:hover {
+       background-color: #007bff;
+       color: white;
+   }
+   
+   /* 二维码弹窗 - 默认隐藏 */
+   .qrcode-popup {
+       position: absolute;
+       top: -150px;  /* 弹窗显示在图标上方 */
+       left: 50%;
+       transform: translateX(-50%);
+       padding: 10px;
+       background-color: white;
+       border-radius: 8px;
+       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+       z-index: 999;
+       opacity: 0;
+       visibility: hidden;
+       transition: all 0.3s ease;
+   }
+   
+   /* 二维码图片样式 */
+   .qrcode-popup img {
+       width: 120px;
+       height: 120px;
+       display: block;
+   }
+   
+   /* 鼠标悬浮时显示弹窗 */
+   .social-item:hover .qrcode-popup {
+       opacity: 1;
+       visibility: visible;
+       top: -140px;  /* 轻微位移动画 */
+   }
+   </style>
+   
+   <!-- 引入字体图标库（确保图标能正常显示） -->
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <footer>
+        <div class="container"><p>&copy; 2026 平面设计师个人页HUJIONG | 用设计创造价值</p></div>
+    </footer>
+
+    <script>
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // 平滑滚动 (只处理存在对应id的链接)
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                const target = document.querySelector(targetId);
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // 轮播功能 + 文字动态变化
+        (function() {
+            const slides = document.querySelectorAll('.carousel-slide');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const indicators = document.querySelectorAll('.indicator');
+            const heroText = document.getElementById('heroText');
+            let currentIndex = 0;
+            const totalSlides = slides.length;
+            let autoPlayInterval;
+
+            // 三张幻灯片对应的文字内容
+            const textContent = [
+                {
+                    title: '<span>品牌</span>视觉语言',
+                    subtitle: '从LOGO到全案，打造独一无二的品牌视觉体系，提升品牌辨识度',
+                    button: '查看品牌设计'
+                },
+                {
+                    title: '<span>营销</span>创意引擎',
+                    subtitle: '从策略到执行，用视觉驱动营销转化，助力品牌增长',
+                    button: '查看营销案例'
+                },
+                {
+                    title: '<span>电商</span>视觉赋能',
+                    subtitle: '高转化详情页、创意主图、品牌电商全案设计',
+                    button: '查看电商案例'
+                }
+            ];
+
+            function updateText(index) {
+                const data = textContent[index];
+                heroText.innerHTML = `
+                    <h1 class="hero-title">${data.title}</h1>
+                    <p class="hero-subtitle">${data.subtitle}</p>
+                    <a href="#portfolio" class="hero-cta">${data.button}</a>
+                `;
+            }
+
+            function showSlide(index) {
+                if (index < 0) index = totalSlides - 1;
+                if (index >= totalSlides) index = 0;
+
+                slides.forEach((slide, i) => {
+                    slide.classList.toggle('active', i === index);
+                });
+                indicators.forEach((ind, i) => {
+                    ind.classList.toggle('active', i === index);
+                });
+
+                updateText(index);
+                currentIndex = index;
+            }
+
+            function nextSlide() { showSlide(currentIndex + 1); }
+            function prevSlide() { showSlide(currentIndex - 1); }
+
+            nextBtn.addEventListener('click', () => { nextSlide(); resetAutoPlay(); });
+            prevBtn.addEventListener('click', () => { prevSlide(); resetAutoPlay(); });
+            indicators.forEach((ind, idx) => {
+                ind.addEventListener('click', () => { showSlide(idx); resetAutoPlay(); });
+            });
+
+            function startAutoPlay() { autoPlayInterval = setInterval(nextSlide, 5000); }
+            function resetAutoPlay() { clearInterval(autoPlayInterval); startAutoPlay(); }
+
+            startAutoPlay();
+
+            const heroSection = document.querySelector('.hero');
+            heroSection.addEventListener('mouseenter', () => clearInterval(autoPlayInterval));
+            heroSection.addEventListener('mouseleave', () => startAutoPlay());
+
+            // 初始化第一张文字
+            updateText(0);
+        })();
+    </script>
+</body>
+</html>

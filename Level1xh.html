@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>科技品牌VI设计 | 张三作品集</title>
+    <style>
+        :root {
+            --primary: #ff3d00;
+            --secondary: #212121;
+            --light: #f5f5f5;
+            --gray: #888888;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', 'Noto Sans SC', sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--secondary);
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 导航栏 */
+        nav {
+            padding: 2rem 0;
+            background-color: white;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .back-btn {
+            display: inline-block;
+            color: var(--secondary);
+            font-weight: 500;
+            padding: 0.5rem 1.5rem;
+            border: 1px solid var(--secondary);
+            border-radius: 50px;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* 作品详情 */
+        .work-detail {
+            padding: 5rem 0;
+        }
+
+        .work-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .work-category {
+            font-size: 1rem;
+            text-transform: uppercase;
+            color: var(--primary);
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        .work-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+        }
+
+        .work-brief {
+            font-size: 1.1rem;
+            color: var(--gray);
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* 作品图片展示 */
+        .work-images {
+            margin: 4rem 0;
+        }
+
+        .work-img-main {
+            width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3rem;
+        }
+
+        .work-img-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .work-img-grid img {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        /* 设计思路 */
+        .work-analysis {
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 2;
+            font-size: 1.1rem;
+        }
+
+        .work-analysis h3 {
+            font-size: 1.8rem;
+            margin: 3rem 0 1.5rem;
+            color: var(--primary);
+        }
+
+        .work-analysis p {
+            margin-bottom: 1.5rem;
+            color: var(--secondary);
+        }
+
+        /* 底部导航 */
+        .work-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5rem;
+            padding-top: 2rem;
+            border-top: 1px solid #eee;
+        }
+
+        .prev-work, .next-work {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--secondary);
+            font-weight: 500;
+        }
+
+        .prev-work:hover, .next-work:hover {
+            color: var(--primary);
+        }
+
+        /* 页脚 */
+        footer {
+            background-color: var(--secondary);
+            color: var(--gray);
+            padding: 2rem 0;
+            text-align: center;
+            margin-top: 5rem;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700;800;900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav>
+        <div class="container nav-container">
+            <div class="logo"><img src="images/HUJIONG-01.png" style="width: 180px; height: auto; vertical-align: middle;"></div>
+            <a href="index.html" class="back-btn">← 返回首页</a>
+        </div>
+    </nav>
+
+    <!-- 作品详情 -->
+    <section class="work-detail">
+        <div class="container">
+            <div class="work-header">
+                <div class="work-category">品牌设计 | VI全案</div>
+                <h1 class="work-title">科技品牌VI全案设计</h1>
+                <p class="work-brief">为XX科技公司打造全新品牌视觉体系，涵盖LOGO、标准色、字体、应用物料等，提升品牌科技感与专业度</p>
+            </div>
+
+            <!-- 主视觉图 -->
+            <div class="work-images">
+                <img src="images/轮播1.png" alt="科技品牌VI主视觉" class="work-img-main">
+                <!-- 细节图网格 -->
+                <div class="work-img-grid">
+                    <img src="images/轮播1.png" alt="LOGO设计稿">
+                    <img src="images/轮播1.png" alt="名片应用效果">
+                    <img src="images/轮播1.png" alt="办公物料应用">
+					<img src="images/轮播1.png" alt="办公物料应用">
+                </div>
+            </div>
+
+            <!-- 设计思路 -->
+            <div class="work-analysis">
+                <h3>项目背景</h3>
+                <p>客户是一家专注于人工智能领域的科技初创公司，原有品牌视觉体系混乱，缺乏辨识度，希望通过全新VI设计树立专业、创新的品牌形象，适配To B和To C双重业务场景。</p>
+
+                <h3>设计思路</h3>
+                <p>1. LOGO设计：提取“智能、连接、科技”核心关键词，采用极简几何图形+渐变蓝紫色调，体现科技感与未来感；字体选用无衬线字体，增强现代感。</p>
+                <p>2. 色彩体系：主色选用科技蓝（#1E88E5），辅助色搭配浅灰与橙色，既保持专业感，又增加活力。</p>
+                <p>3. 应用规范：制定详细的VI手册，规范LOGO使用场景、间距、禁用形式，确保品牌视觉统一。</p>
+
+                <h3>项目成果</h3>
+                <p>新VI体系落地后，客户品牌辨识度提升80%，在行业展会中获得广泛关注，客户反馈合作转化率提升30%，达到预期设计目标。</p>
+            </div>
+
+            <!-- 作品导航 -->
+            <div class="work-nav">
+                <a href="work3.html" class="prev-work">
+                    <span>← 上一个</span>
+                    <div>文创海报设计</div>
+                </a>
+                <a href="work2.html" class="next-work">
+                    <div>食品包装升级设计</div>
+                    <span>下一个 →</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 张三 | 品牌视觉设计师 | 所有作品均为原创</p>
+        </div>
+    </footer>
+</body>
+</html>
